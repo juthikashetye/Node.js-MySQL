@@ -1,5 +1,6 @@
-var mysql = require('mysql');
+var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table2");
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -8,34 +9,61 @@ var con = mysql.createConnection({
   database: "bamazon"
 });
 
-con.connect(function(err) {
+function initializeShopping() {
 
-  if (err) throw err;
+  con.connect(function(err) {
 
-  con.query("SELECT id AS ID, product_name AS Product, price AS Price FROM products", function(err, result, fields) {
+    if (err) throw err;
+
+    getProductDetails();
+
+  });
+}
+
+function getProductDetails() {
+
+  con.query("SELECT id AS ID, product_name AS Product, price AS Price, stock_quantity AS Stock FROM products", function(err, result, fields) {
 
     if (err) throw err;
 
     // console.log(result);
+    console.log("\n Welcome to Bamazon! Which is BETTER than AMAZON. \n");
 
-    console.log(JSON.stringify(result, null, 2));
+    createTable(result);
 
     promptUserToBuy();
 
   });
-});
+
+}
+
+function createTable(data) {
+
+  // By default, headers will be red, and borders will be grey
+  var table = new Table({
+    head: ["ID", "Product", "Price", "In Stock"],
+    wordWrap: true
+  });
+
+  for (var i = 0; i < data.length; i++) {
+    table.push([data[i].ID, data[i].Product, "$" + data[i].Price, data[i].Stock]);
+  }
+
+  console.log(table.toString());
+
+}
 
 function promptUserToBuy() {
 
   inquirer
     .prompt([{
         type: "input",
-        message: "Enter the ID of the product you want to buy.",
+        message: "\n Enter the ID of the product you want to buy.",
         name: "selectedId"
       },
       {
         type: "input",
-        message: "Enter the quantity you want to buy.",
+        message: "\n Enter the quantity you want to buy.",
         name: "quantity"
       }
     ])
@@ -51,15 +79,17 @@ function promptUserToBuy() {
         if (res[0].stock_quantity >= inquirerResponse.quantity) {
 
           var updatedStock = res[0].stock_quantity - parseInt(inquirerResponse.quantity);
-          console.log("Items remaining in stock " + updatedStock + "\n");
+
+          // console.log("Items remaining in stock " + updatedStock + "\n");
 
           var payment = res[0].price * inquirerResponse.quantity;
 
           //query for updating database
           con.query("UPDATE products SET stock_quantity = ? WHERE id = ?", [updatedStock, inquirerResponse.selectedId], function(err, response) {
 
-            console.log("Your Order was successfully placed." + "\n" +
+            console.log("Your Order was successfully placed." + "\n \n" +
               "The total amount to be paid is $" + payment + "\n");
+            continueShopping();
 
           });
 
@@ -68,14 +98,38 @@ function promptUserToBuy() {
           //if stock has less items than requested then show this msg
         } else if ((res[0].stock_quantity < inquirerResponse.quantity) && (!res[0].stock_quantity == 0)) {
 
-          console.log("\n" + "Sorry we couldn't complete your order for " + res[0].product_name + " as we have only " + res[0].stock_quantity + " in stock." + "\n");
-
-          //if stock has 0 items for the requested product then show this msg	
+          console.log("Sorry we couldn't complete your order for " + res[0].product_name + " as we have only " + res[0].stock_quantity + " in stock." + "\n");
+          continueShopping();
+          //if stock has 0 items for the requested product then show this msg 
         } else if (res[0].stock_quantity === 0) {
 
-          console.log("\n" + "Sorry we are Out of Stock for " + res[0].product_name + "." + "\n");
+          console.log("Sorry we are Out of Stock for " + res[0].product_name + "." + "\n");
+          continueShopping();
         }
       });
     });
 
 }
+
+function continueShopping() {
+
+  inquirer
+    .prompt([{
+      type: "list",
+      message: "Do you want to continue shopping?",
+      choices: ["YES", "NO"],
+      name: "shopMore"
+    }])
+    .then(function(userResponse) {
+
+      if (userResponse.shopMore == "YES") {
+        getProductDetails();
+      } else {
+        console.log("\n Thank you for visiting Bamazon! See you soon again. \n");
+        con.end();
+      }
+
+    });
+}
+
+initializeShopping();
