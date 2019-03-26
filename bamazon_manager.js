@@ -32,7 +32,7 @@ function showMenu() {
     .prompt([{
       type: "list",
       message: "\n Hi, what do you want to do?",
-      choices: ["View Products For Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "I am done. Log me out"],
+      choices: ["View Products For Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Log Out"],
       name: "task"
     }])
     .then(function(mngr) {
@@ -50,7 +50,7 @@ function showMenu() {
         case "Add New Product":
           addNewProduct();
           break;
-        case "I am done. Log me out":
+        case "Log Out":
           logOut();
           break;
       }
@@ -91,8 +91,8 @@ function viewLowStock() {
     else {
       console.log("\n Your inventory is well stocked. \n");
       continueManaging();
-    }
 
+    }
   });
 }
 
@@ -112,17 +112,29 @@ function addToStock() {
       .prompt([{
           type: "input",
           message: "\n Enter the ID of the product you want to add more of in the stock.",
-          name: "prodId"
+          name: "prodId",
+          validate: function(idValue) {
+            if (isNaN(idValue) === false) {
+              return true;
+            }
+            return false;
+          }
         },
         {
           type: "input",
           message: "\n Enter the quantity you want to add in stock.",
-          name: "quantityAdded"
+          name: "quantityAdded",
+          validate: function(quantValue) {
+            if (isNaN(quantValue) === false) {
+              return true;
+            }
+            return false;
+          }
         }
       ])
       .then(function(update) {
 
-      	//only select the item which is being updated for making a addedStock variable
+        //only select the item which is being updated for making a addedStock variable
         con.query("SELECT * FROM products WHERE id = ?", [update.prodId], function(err, result, fields) {
 
           if (err) throw err;
@@ -144,71 +156,70 @@ function addToStock() {
               createTable(result);
               continueManaging();
             });
-
           });
-
         });
       });
-
   });
 }
 
 function addNewProduct() {
 
-  //show all products to manager for reference
-  con.query("SELECT * FROM products", function(err, result, fields) {
-
-    if (err) throw err;
-
-    console.log("\n Here's a list of all the products in store for your reference. \n");
-
-    createTable(result);
-
-    //prompt manager to add new product
-    inquirer
-      .prompt([{
-          type: "input",
-          message: "\n Enter the name of the new product.",
-          name: "prodName"
-        },
-        {
-          type: "input",
-          message: "\n Enter the department of the product.",
-          name: "dept"
-        },
-        {
-          type: "number",
-          message: "\n Enter the price of the product.",
-          name: "prodPrice"
-        },
-        {
-          type: "number",
-          message: "\n Enter the quantity of the product.",
-          name: "stock"
+  //prompt manager to add new product
+  inquirer
+    .prompt([{
+        type: "input",
+        message: "\n Enter the name of the new product.",
+        name: "prodName"
+      },
+      {
+        type: "input",
+        message: "\n Enter the department of the product.",
+        name: "dept"
+      },
+      {
+        type: "input",
+        message: "\n Enter the price of the product.",
+        name: "prodPrice",
+        validate: function(priceValue) {
+          if (isNaN(priceValue) === false) {
+            return true;
+          }
+          return false;
         }
-      ])
-      .then(function(newProd) {
+      },
+      {
+        type: "input",
+        message: "\n Enter the quantity of the product.",
+        name: "stock",
+        validate: function(stockValue) {
+          if (isNaN(stockValue) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+    .then(function(newProd) {
 
-      	//query to insert new row in product table. Note the separate '?' for each VALUE
-        con.query("INSERT INTO products (product_name, department_name,price,stock_quantity) VALUES (?,?,?,?)",
-          [newProd.prodName, newProd.dept, newProd.prodPrice, newProd.stock],
-          function(err, result, fields) {
+      //query to insert new row in product table. Note the separate '?' for each VALUE
+      con.query("INSERT INTO products (product_name, department_name,price,stock_quantity) VALUES (?,?,?,?)",
+        [newProd.prodName, newProd.dept, newProd.prodPrice, newProd.stock],
+        function(err, result, fields) {
+
+          if (err) throw err;
+
+          console.log("\n The product was successfully added to the store. See the new entry included in the table below. \n");
+
+          //show the new product included with the entire table
+          con.query("SELECT * FROM products", function(err, result, fields) {
 
             if (err) throw err;
 
-            console.log("\n The product was successfully added to the store. See the new entry included in the table below. \n");
-
-            //show the new product included with the entire table
-            con.query("SELECT * FROM products", function(err, result, fields) {
-
-              if (err) throw err;
-
-              createTable(result);
-              continueManaging();
-            });
+            createTable(result);
+            continueManaging();
           });
-      });
-  });
+        });
+    });
 }
 
 function continueManaging() {
@@ -228,7 +239,6 @@ function continueManaging() {
       } else {
         logOut();
       }
-
     });
 }
 

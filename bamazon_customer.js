@@ -56,14 +56,26 @@ function promptUserToBuy() {
 
   inquirer
     .prompt([{
-        type: "number",
+        type: "input",
         message: "\n Enter the ID of the product you want to buy.",
-        name: "selectedId"
+        name: "selectedId",
+        validate: function(idValue) {
+          if (isNaN(idValue) === false) {
+            return true;
+          }
+          return false;
+        }
       },
       {
-        type: "number",
+        type: "input",
         message: "\n Enter the quantity you want to buy.",
-        name: "quantity"
+        name: "quantity",
+        validate: function(quantValue) {
+          if (isNaN(quantValue) === false) {
+            return true;
+          }
+          return false;
+        }
       }
     ])
     .then(function(prompt) {
@@ -85,7 +97,7 @@ function promptUserToBuy() {
           con.query("UPDATE products SET stock_quantity = ? WHERE id = ?", [updatedStock, prompt.selectedId], function(err, response) {
 
             console.log("Your Order was successfully placed." + "\n \n" +
-              "The total amount to be paid is $" + payment + "\n");
+              "You paid a total amount of $" + payment + "\n");
             continueShopping();
 
           });
@@ -104,7 +116,6 @@ function promptUserToBuy() {
         }
       });
     });
-
 }
 
 function continueShopping() {
@@ -124,7 +135,6 @@ function continueShopping() {
         console.log("\n Thank you for visiting Bamazon! See you soon again. Bye! \n");
         con.end();
       }
-
     });
 }
 
