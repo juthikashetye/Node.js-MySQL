@@ -53,17 +53,17 @@
 
 * `node bamazon_manager.js`
 * This command will output the following:
-	![Image of all products ](./images/concert-this-ladyGaga.png)
+	![Image of all products ](./images/firstMngrDisplay.jpg)
 
 * `View Products For Sale`
-	![Image of all products ](./images/concert-this-ladyGaga.png)
+	![Image of all products ](./images/prodForSale.jpg)
 
 * `View Low Inventory`
-	![Image of all products ](./images/concert-this-ladyGaga.png)
+	![Image of all products ](./images/lowStock.jpg)
 
 * `Add to Inventory`
-	![Image of all products ](./images/concert-this-ladyGaga.png)
+	![Image of all products ](./images/addToStock.jpg)
 
 * `Add New Product`
-	![Image of all products ](./images/concert-this-ladyGaga.png)
+	![Image of all products ](./images/addNewProd.jpg)
 
