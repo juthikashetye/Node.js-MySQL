@@ -8,7 +8,11 @@
 
 * The app will take in orders from customers and deplete stock from the store's inventory.
 
-* There are two files `bamazon_customer.js` and `bamazon_manager.js` which have a customer and manager view respectively. 
+* There are two files `bamazon_customer.js` and `bamazon_manager.js` which have a customer and manager view respectively.
+
+## Video of the working of the App
+
+* Click this [Youtube video](https://youtu.be/XngrMxbALGs) for a demo of the working of this app.
 
 ## Things to do before you start using the app
 
