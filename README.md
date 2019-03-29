@@ -38,13 +38,16 @@
 
 * `node bamazon_customer.js`
 * This command will output the following:
-	![Image of products](./images/concert-this-ladyGaga.png)
+	![Image of products](./images/firstCustDisplay.jpg)
+
+* If sufficient quantity in stock then the following is shown:
+	![Image of products](./images/transactionSuccess.jpg)
 
 * If insufficient quantity in stock then the following is shown:
-	![Image of products](./images/concert-this-ladyGaga.png)
+	![Image of products](./images/insufficientStock.jpg)
 
 * If out of stock then the following is shown:
-	![Image of products](./images/concert-this-ladyGaga.png)
+	![Image of products](./images/outOfStock.jpg)
 
 #### To start the Manager view, type this :
 

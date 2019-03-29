@@ -167,14 +167,10 @@ function addNewProduct() {
   //prompt manager to add new product
   inquirer
     .prompt([{
-        type: "input",
-        message: "\n Enter the name of the new product.",
+        type: "list",
+        message: "\n Select the product you want to add to the store.",
+        choices: ["Sweater", "TV", "Microwave", "Sandals", "Dining Table", "Yoga Mat"],
         name: "prodName"
-      },
-      {
-        type: "input",
-        message: "\n Enter the department of the product.",
-        name: "dept"
       },
       {
         type: "input",
@@ -201,9 +197,31 @@ function addNewProduct() {
     ])
     .then(function(newProd) {
 
+      var department;
+
+      switch (newProd.prodName) {
+        case "Sweater":
+          department = "Clothing";
+          break;
+        case "TV":
+          department = "Electronics";
+          break;
+        case "Microwave":
+          department = "Electronics";
+          break;
+        case "Sandals":
+          department = "Footwear";
+          break;
+        case "Dining Table":
+          department = "Home";
+          break;
+        case "Yoga Mat":
+          department = "Health & Wellness";
+          break;
+      }
       //query to insert new row in product table. Note the separate '?' for each VALUE
       con.query("INSERT INTO products (product_name, department_name,price,stock_quantity) VALUES (?,?,?,?)",
-        [newProd.prodName, newProd.dept, newProd.prodPrice, newProd.stock],
+        [newProd.prodName, department, newProd.prodPrice, newProd.stock],
         function(err, result, fields) {
 
           if (err) throw err;
