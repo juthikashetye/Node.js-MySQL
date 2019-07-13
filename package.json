@@ -1,8 +1,8 @@
 {
   "name": "Node.js-MySQL",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "## About this app",
+  "main": "bamazon_customer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,9 +18,8 @@
   },
   "homepage": "https://github.com/juthikashetye/Node.js-MySQL#readme",
   "dependencies": {
-    "cli-table": "^0.3.1",
-    "cli-table2": "^0.2.0",
-    "inquirer": "^6.2.2",
-    "mysql": "^2.16.0"
+    "cli-table3": "0.5.1",
+    "inquirer": "6.5.0",
+    "mysql": "2.17.1"
   }
 }
